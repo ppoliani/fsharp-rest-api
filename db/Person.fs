@@ -12,8 +12,8 @@ type Result =
 
 [<AutoOpen>]
 module PersonRepository =     
-    let wildcard = FilterDefinition<Person>.op_Implicit("{}")
-    let people = db.GetCollection<Person> "people"
+    let people = db.GetCollection<BsonDocument> "people"
+    let wildcard = FilterDefinition<BsonDocument>.op_Implicit("{}")
     
     let tmpPerson = 
         {Id = BsonObjectId(ObjectId.GenerateNewId())
@@ -21,11 +21,15 @@ module PersonRepository =
          Age = 20
          Email = "Email"} 
 
+    let mapDocToPerson doc = doc
+    
     let getPeople() = 
         printfn "Fetching People"
+        
         people.Find(wildcard).ToListAsync() 
         |> Async.AwaitTask 
         |> Async.RunSynchronously 
+        |> Seq.map mapDocToPerson
         |> List.ofSeq
         |> Seq.ofList
 

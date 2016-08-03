@@ -17,7 +17,7 @@ open SuaveRestApi.Data
 module RestFul =
     type RestResource<'a> = {
         GetAll : unit -> 'a seq
-        Create: 'a -> 'a
+        //Create: 'a -> 'a
         Update: 'a -> 'a option
         Delete: int -> Result 
         GetById: int -> 'a option
@@ -67,7 +67,7 @@ module RestFul =
         choose [
             path resourcePath >=> choose [
                 GET >=> warbler(fun _ -> resource.GetAll() |> JSON)
-                POST >=> request (getResourceFromReq >> resource.Create >> JSON)
+                //POST >=> request (getResourceFromReq >> resource.Create >> JSON)
                 PUT >=> request (getResourceFromReq >> resource.Update >> handleResource badRequest)
             ]
             DELETE >=> pathScanId deleteById
