@@ -1,5 +1,0 @@
-#load @"include.mongodb.bson.fsx" 
-#load @"include.mongodb.driver.fsx" 
-#load @"include.mongodb.driver.core.fsx" 
-#r "../../../packages/mongocsharpdriver/lib/net45/MongoDB.Driver.Legacy.dll" 
-printfn "mongocsharpdriver Loaded" 

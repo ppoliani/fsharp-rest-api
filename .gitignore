@@ -1,5 +1,5 @@
 packages/
 obj/
+paket-files/
 .paket/
 .fake/
-.paket-file/
