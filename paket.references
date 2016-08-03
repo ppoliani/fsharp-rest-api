@@ -1,0 +1,6 @@
+FSharp.Core
+Suave
+newtonsoft.json
+MongoDB.Driver
+MongoDB.Bson
+MongoDB.FSharp
