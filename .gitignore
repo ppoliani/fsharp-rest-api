@@ -1,5 +1,6 @@
 packages/
 obj/
+build/
 paket-files/
 .paket/
 .fake/
