@@ -16,13 +16,16 @@ module PersonRepository =
     let wildcard = FilterDefinition<BsonDocument>.op_Implicit("{}")
     
     let tmpPerson = 
-        {Id = BsonObjectId(ObjectId.GenerateNewId())
+        {Id = BsonObjectId.Create(ObjectId.GenerateNewId())
          Name = "Pavlos"
          Age = 20
          Email = "Email"} 
 
-    let mapDocToPerson doc = 
-        tmpPerson
+    let mapDocToPerson (doc: BsonDocument) = 
+        { Id = BsonObjectId.Create(doc.GetValue "_id" |> string)
+          Name = doc.GetValue "Name" |> string
+          Age = doc.GetValue "Age" |> int
+          Email = doc.GetValue "Email" |> string}
     
     let mapPersonToDoc person = 
         BsonDocument([ BsonElement("Name", BsonString person.Name)
@@ -32,12 +35,14 @@ module PersonRepository =
     let getPeople() = 
         printfn "Fetching People"
         
-        people.Find(wildcard).ToListAsync() 
-            |> Async.AwaitTask 
-            |> Async.RunSynchronously 
-            |> Seq.map mapDocToPerson
-            |> List.ofSeq
-            |> Seq.ofList
+        async {
+            let! people = people.Find(wildcard).ToListAsync() |> Async.AwaitTask
+            
+            return people 
+                |> Seq.map mapDocToPerson 
+                |> List.ofSeq 
+                |> Seq.ofList
+        }
 
     let getPersonById id = None
     

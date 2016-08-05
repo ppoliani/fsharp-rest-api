@@ -16,7 +16,7 @@ open SuaveRestApi.Data
 [<AutoOpen>]
 module RestFul =
     type RestResource<'a> = {
-        GetAll : unit -> 'a seq
+        GetAll : unit -> Async<'a seq>
         Create: 'a -> string Result
         // Update: 'a -> 'a option
         // Delete: int -> Result 
@@ -64,9 +64,17 @@ module RestFul =
         //         | Success value -> NO_CONTENT
         //         | Failure msg -> HTTP404
         
+        let getAll httpContext = 
+            async {
+                let! resources = resource.GetAll()
+                return resources |> JSON
+            } 
+            
+            |> Async.RunSynchronously 
+
         choose [
             path resourcePath >=> choose [
-                GET >=> warbler(fun _ -> resource.GetAll() |> JSON)
+                GET >=> warbler getAll
                 POST >=> request (getResourceFromReq >> resource.Create >> JSON)
                 // PUT >=> request (getResourceFromReq >> resource.Update >> handleResource badRequest)
             ]
