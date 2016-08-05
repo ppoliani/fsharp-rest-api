@@ -7,8 +7,6 @@ open MongoDB.FSharp
 [<AutoOpen>]
 module Data =
     printfn "Connecting to mongodb..."
-    //Serializers.Register()
-
     let connectionString = "mongodb://localhost"
     let client = new MongoClient(connectionString) :> IMongoClient
     let db = client.GetDatabase "test"

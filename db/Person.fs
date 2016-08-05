@@ -6,9 +6,9 @@ open MongoDB.FSharp
 
 type Person = { Id:BsonObjectId; Name:string; Age:int; Email: string }
 
-type Result = 
-    | Success
-    | Failure
+type Result<'T> = 
+    | Success of 'T
+    | Failure of string
 
 [<AutoOpen>]
 module PersonRepository =     
@@ -21,21 +21,38 @@ module PersonRepository =
          Age = 20
          Email = "Email"} 
 
-    let mapDocToPerson doc = doc
+    let mapDocToPerson doc = 
+        tmpPerson
     
+    let mapPersonToDoc person = 
+        BsonDocument([ BsonElement("Name", BsonString person.Name)
+                       BsonElement("Age", BsonInt32 person.Age)
+                       BsonElement("Email", BsonString person.Email) ])
+
     let getPeople() = 
         printfn "Fetching People"
         
         people.Find(wildcard).ToListAsync() 
-        |> Async.AwaitTask 
-        |> Async.RunSynchronously 
-        |> Seq.map mapDocToPerson
-        |> List.ofSeq
-        |> Seq.ofList
+            |> Async.AwaitTask 
+            |> Async.RunSynchronously 
+            |> Seq.map mapDocToPerson
+            |> List.ofSeq
+            |> Seq.ofList
 
     let getPersonById id = None
     
-    let createPerson person = tmpPerson
+    let createPerson person =
+        printfn "Creating People"
+        
+        let personDoc = mapPersonToDoc person
+
+        personDoc
+            |> people.InsertOneAsync
+            |> Async.AwaitIAsyncResult
+            |> Async.RunSynchronously
+            |> function 
+                | true -> Success(personDoc.GetValue "_id" |> string) 
+                | _    -> Failure "Could not insert"
 
     let updatePersonById personId personToBeUpdated = None
 

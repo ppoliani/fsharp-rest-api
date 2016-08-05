@@ -8,11 +8,11 @@ open Suave.Successful
 let main argv = 
     let personWebPart = rest "people" {
         GetAll  = PersonRepository.getPeople
-        GetById = PersonRepository.getPersonById
-        //Create  = PersonRepository.createPerson
-        Update  = PersonRepository.updatePerson
-        Delete  = PersonRepository.deletePerson
-        UpdateById = PersonRepository.updatePersonById
+        Create  = PersonRepository.createPerson
+        // GetById = PersonRepository.getPersonById
+        // Update  = PersonRepository.updatePerson
+        // // Delete  = PersonRepository.deletePerson
+        // UpdateById = PersonRepository.updatePersonById
     }
 
     startWebServer defaultConfig personWebPart 

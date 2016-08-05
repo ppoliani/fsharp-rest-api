@@ -17,11 +17,11 @@ open SuaveRestApi.Data
 module RestFul =
     type RestResource<'a> = {
         GetAll : unit -> 'a seq
-        //Create: 'a -> 'a
-        Update: 'a -> 'a option
-        Delete: int -> Result 
-        GetById: int -> 'a option
-        UpdateById: int -> 'a -> 'a option
+        Create: 'a -> string Result
+        // Update: 'a -> 'a option
+        // Delete: int -> Result 
+        // GetById: int -> 'a option
+        // UpdateById: int -> 'a -> 'a option
     }
 
     let JSON v =
@@ -53,26 +53,26 @@ module RestFul =
         let pathScanId = 
             pathScan (new PrintfFormat<int, _, _, _, _> (resourcePath + "/%d"))
 
-        let getById =
-            resource.GetById >> handleResource HTTP404
+        // let getById =
+        //     resource.GetById >> handleResource HTTP404
 
-        let updateById id = 
-            request (getResourceFromReq >> resource.UpdateById id >> handleResource badRequest)
+        // let updateById id = 
+        //     request (getResourceFromReq >> resource.UpdateById id >> handleResource badRequest)
 
-        let deleteById id =
-            resource.Delete id |> function 
-                | Success -> NO_CONTENT
-                | Failure -> HTTP404
+        // let deleteById id =
+        //     resource.Delete id |> function 
+        //         | Success value -> NO_CONTENT
+        //         | Failure msg -> HTTP404
         
         choose [
             path resourcePath >=> choose [
                 GET >=> warbler(fun _ -> resource.GetAll() |> JSON)
-                //POST >=> request (getResourceFromReq >> resource.Create >> JSON)
-                PUT >=> request (getResourceFromReq >> resource.Update >> handleResource badRequest)
+                POST >=> request (getResourceFromReq >> resource.Create >> JSON)
+                // PUT >=> request (getResourceFromReq >> resource.Update >> handleResource badRequest)
             ]
-            DELETE >=> pathScanId deleteById
-            GET    >=> pathScanId getById
-            PUT    >=> pathScanId updateById
+            // DELETE >=> pathScanId deleteById
+            // GET    >=> pathScanId getById
+            // PUT    >=> pathScanId updateById
         ]
 
     
