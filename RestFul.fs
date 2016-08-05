@@ -64,7 +64,7 @@ module RestFul =
         //         | Success value -> NO_CONTENT
         //         | Failure msg -> HTTP404
         
-        let getAll httpContext = 
+        let getAll _ = 
             async {
                 let! resources = resource.GetAll()
                 return resources |> JSON
