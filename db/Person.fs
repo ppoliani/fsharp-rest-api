@@ -14,12 +14,6 @@ type Result<'T> =
 module PersonRepository =     
     let people = db.GetCollection<BsonDocument> "people"
     let wildcard = FilterDefinition<BsonDocument>.op_Implicit("{}")
-    
-    let tmpPerson = 
-        {Id = BsonObjectId.Create(ObjectId.GenerateNewId())
-         Name = "Pavlos"
-         Age = 20
-         Email = "Email"} 
 
     let mapDocToPerson (doc: BsonDocument) = 
         { Id = BsonObjectId.Create(doc.GetValue "_id" |> string)
